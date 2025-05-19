@@ -3,7 +3,7 @@ name: Daily LINE Notification  # ✅ これがないと表示されません！
 on:
   schedule:
     - cron: '0 3 * * *'  # JST 12:00 実行 ！
-  workflow_dispatch:  # ✅ 手動実行ボタンを有効にする！
+  workflow_dispatch:  # ✅ 手動実行ボタンを有効にする！！
 
 jobs:
   notify:
@@ -24,13 +24,12 @@ jobs:
 
       - name: Write credentials.json
         run: |
-          echo "${{ secrets.GOOGLE_SERVICE_ACCOUNT }}" > credentials.json
+          cat <<EOF > credentials.json
+${{ secrets.GOOGLE_SERVICE_ACCOUNT }}
+EOF
 
       - name: Run notifier script
-        env:
-          LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }}
-          LINE_USER_ID: ${{ secrets.LINE_USER_ID }}
         run: |
-          echo "LINE_CHANNEL_ACCESS_TOKEN=$LINE_CHANNEL_ACCESS_TOKEN" > .env
-          echo "LINE_USER_ID=$LINE_USER_ID" >> .env
+          echo "LINE_CHANNEL_ACCESS_TOKEN=${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }}" > .env
+          echo "LINE_USER_ID=${{ secrets.LINE_USER_ID }}" >> .env
           python today_notify.py
